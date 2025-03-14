@@ -1,37 +1,23 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-
-// import initApp from "./src/modules/index.router.js";
-// import "dotenv/config";
-
-// const app = express();
-// const PORT = process.env.PORT || 6005;
-
-// initApp(app, express);
-
-// app.listen(PORT, () => {
-//   console.log(`listening on port ${PORT}`);
-// });
-
-
-//const express = require('express');
-//const mongoose = require('mongoose');
-//const cors = require('cors'); // Import CORS
+import router from "./src/modules/todos/todo.router.js";
 
 const app = express();
-const PORT = 3000;
+const PORT = 5000;
 
-// Use CORS Middleware
-app.use(cors());
-
-// Middleware to parse JSON data
 app.use(express.json());
 
-// MongoDB Connection URI
-const MONGO_URI = 'mongodb://127.0.0.1:27017';
-//const MONGO_URI = 'mongodb://mongo-shared-dev:fikTpih4U2!@20.218.241.192:27017/?directConnection=true&appName=mongosh+1.8.2&authMechanism=DEFAULT';
+app.use(express.urlencoded({extended: true }));
 
+// Use CORS Middleware
+app.use(cors({
+  origin: 'http://localhost:3000',  // Allow requests from frontend
+  allowedHeaders: ['Content-Type'] // Allowed headers
+}));
+
+app.use("/api/todos", router); // Mounts the route correctly
+const MONGO_URI ='mongodb://mongodb:27017';
 const dbname = 'todos';
 
 // Connect to MongoDB
@@ -85,21 +71,28 @@ app.post('/api/todos', async (req, res) => {
 
     return res.status(201).send({ todo });
   } catch (error) {
-    // if (error.errors.title)
-    //   return res.status(400).send({ message: "the Title field is required" });
 
-    // if (error.errors.description)
-    //   return res
-    //     .status(400)
-    //     .send({ message: "the Description field is required" });
-
-    // return res.status(500).send({ message: "Internal server error" });
     console.log(error);
     return res.status(500).send({ message: error });
   }
 });
-// Route: Fetch all users
-app.get('/api/gettodos', async (req, res) => {
+
+app.get('/api/todos', async (req, res) => {
+  try {
+    // Fetch todos from the database or static data
+    const todos = await Todos.find(); // Replace with actual DB query logic
+    console.log("Todos fetched:", todos); // Log data for debugging
+    res.json({ todos: todos });
+  } catch (error) {
+    console.error("Error fetching todos:", error); // Log errors if any
+    res.status(500).json({ error: 'Failed to fetch todos' });
+  }
+});
+
+
+
+// Route: Fetch all todos
+app.get('/api/todos', async (req, res) => {
 
   try {
 
@@ -107,15 +100,6 @@ app.get('/api/gettodos', async (req, res) => {
 
     return res.status(201).send({ todoList });
   } catch (error) {
-    // if (error.errors.title)
-    //   return res.status(400).send({ message: "the Title field is required" });
-
-    // if (error.errors.description)
-    //   return res
-    //     .status(400)
-    //     .send({ message: "the Description field is required" });
-
-    // return res.status(500).send({ message: "Internal server error" });
     console.log(error);
     return res.status(500).send({ message: error });
   }

@@ -30,9 +30,6 @@ const AddTodoForm = ({ fetchTodos, page, limit }) => {
       e.preventDefault();
       const resp1 = await addTodo({ ...newTodo });
       console.log("newTodo display");
-
-      const resp = axios.post("http://localhost:3000/api/todos", newTodo);
-      console.log(resp);
     }
     catch (ex) {
       console.log("catch me ", ex);

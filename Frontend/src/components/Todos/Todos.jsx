@@ -70,7 +70,7 @@ const Todos = () => {
 
   useEffect(() => {
     fetchTodos(page, limit);
-  }, []);
+  }, [page, limit]);
 
   if (isFetchingTodos) return <Loader />;
 

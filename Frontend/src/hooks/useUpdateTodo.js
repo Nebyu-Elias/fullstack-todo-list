@@ -5,10 +5,12 @@ const useUpdateTodo = (setTodos) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const updateTodo = async (todo) => {
+    console.log("Updating todo:", todo);
+
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://fullstack-todolist-upnv.onrender.com/todos/${todo._id}`,
+        `http://localhost:5000/api/todos/${todo._id}`,
         {
           method: "PUT",
           headers: {
@@ -17,6 +19,10 @@ const useUpdateTodo = (setTodos) => {
           body: JSON.stringify({ isCompleted: !todo.isCompleted }),
         }
       );
+
+      const responseText = await response.text(); // Get raw response
+      console.log("Response:", response.status, responseText);
+      
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
